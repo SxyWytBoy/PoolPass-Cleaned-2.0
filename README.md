@@ -84,4 +84,4 @@ See `.env.example` for all required variables. Never commit your `.env` file.
 
 ## 📦 Deployment
 
-This project is configured for deployment on Vercel or Render. Set the environment variables in your hosting dashboard before deploying.
+This project is configured for deployment on Vercel or Render. Set your environment variables in your hosting dashboard before deploying.
