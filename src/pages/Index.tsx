@@ -7,6 +7,7 @@ import HowItWorks from '@/components/HowItWorks';
 import Testimonials from '@/components/Testimonials';
 import Footer from '@/components/Footer';
 import PoolCard from '@/components/PoolCard';
+import WaitlistBanner from '@/components/WaitlistBanner';
 
 // Mock data for featured pools
 const featuredPools = [
@@ -48,6 +49,7 @@ const featuredPools = [
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <WaitlistBanner />
       <Navbar />
       
       {/* Hero Section with additional top margin class */}
