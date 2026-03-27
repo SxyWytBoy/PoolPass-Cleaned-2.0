@@ -6,25 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
+import { X } from 'lucide-react';
 
 const amenitiesOptions = [
-  "Heated",
-  "Loungers",
-  "Towels Provided",
-  "Food Available",
-  "Changing Rooms",
-  "Hot Tub/Jacuzzi",
-  "Sauna",
-  "WiFi",
-  "Bar Service",
-  "Parking",
-  "Accessible",
-  "Child Friendly",
+  "Heated", "Loungers", "Towels Provided", "Food Available",
+  "Changing Rooms", "Hot Tub/Jacuzzi", "Sauna", "WiFi",
+  "Bar Service", "Parking", "Accessible", "Child Friendly",
 ];
 
 const daysOfWeek = [
   "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
 ];
+
+const MAX_IMAGES = 5;
 
 const HostApply = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -49,6 +43,11 @@ const HostApply = () => {
   const [hostEmail, setHostEmail] = useState('');
   const [hostPhone, setHostPhone] = useState('');
 
+  // Images
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState('');
+
   const toggleAmenity = (amenity: string) => {
     setSelectedAmenities(prev =>
       prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]
@@ -59,6 +58,55 @@ const HostApply = () => {
     setAvailableDays(prev =>
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     );
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const remaining = MAX_IMAGES - imageFiles.length;
+    const toAdd = files.slice(0, remaining);
+
+    setImageFiles(prev => [...prev, ...toAdd]);
+
+    toAdd.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input so same file can be re-selected if removed
+    e.target.value = '';
+  };
+
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async (): Promise<string[]> => {
+    const urls: string[] = [];
+
+    for (let i = 0; i < imageFiles.length; i++) {
+      const file = imageFiles[i];
+      setUploadProgress(`Uploading image ${i + 1} of ${imageFiles.length}...`);
+
+      const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      const { error: uploadError } = await supabase.storage
+        .from('pool-images')
+        .upload(filename, file);
+
+      if (uploadError) throw new Error(`Failed to upload ${file.name}`);
+
+      const { data } = supabase.storage
+        .from('pool-images')
+        .getPublicUrl(filename);
+
+      urls.push(data.publicUrl);
+    }
+
+    setUploadProgress('');
+    return urls;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,32 +125,45 @@ const HostApply = () => {
 
     setLoading(true);
 
-    const { error: supabaseError } = await supabase
-      .from('host_applications')
-      .insert([{
-        pool_name: name,
-        location,
-        description,
-        price: parseFloat(price),
-        indoor_outdoor: indoorOutdoor,
-        amenities: selectedAmenities,
-        available_from: availableFrom,
-        available_to: availableTo,
-        available_days: availableDays,
-        host_name: hostName,
-        host_email: hostEmail,
-        host_phone: hostPhone,
-        status: 'pending',
-      }]);
+    try {
+      // Upload images first if any selected
+      let imageUrls: string[] = [];
+      if (imageFiles.length > 0) {
+        imageUrls = await uploadImages();
+      }
 
-    setLoading(false);
+      const { error: supabaseError } = await supabase
+        .from('host_applications')
+        .insert([{
+          pool_name: name,
+          location,
+          description,
+          price: parseFloat(price),
+          indoor_outdoor: indoorOutdoor,
+          amenities: selectedAmenities,
+          available_from: availableFrom,
+          available_to: availableTo,
+          available_days: availableDays,
+          host_name: hostName,
+          host_email: hostEmail,
+          host_phone: hostPhone,
+          images: imageUrls,
+          status: 'pending',
+        }]);
 
-    if (supabaseError) {
-      setError('Something went wrong. Please try again.');
-      return;
+      if (supabaseError) {
+        setError('Something went wrong saving your application. Please try again.');
+        return;
+      }
+
+      setSubmitted(true);
+
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+      setUploadProgress('');
     }
-
-    setSubmitted(true);
   };
 
   if (submitted) {
@@ -197,6 +258,55 @@ const HostApply = () => {
               </div>
             </div>
 
+            {/* Pool Photos */}
+            <div>
+              <h2 className="text-lg font-semibold mb-1 text-gray-800">Pool Photos</h2>
+              <p className="text-sm text-gray-500 mb-4">Upload up to {MAX_IMAGES} photos. The first photo will be used as the cover image.</p>
+
+              {/* Previews */}
+              {imagePreviews.length > 0 && (
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {imagePreviews.map((src, i) => (
+                    <div key={i} className="relative rounded-xl overflow-hidden aspect-video bg-gray-100">
+                      <img src={src} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                      {i === 0 && (
+                        <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+                          Cover
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeImage(i)}
+                        className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 text-white rounded-full p-0.5 transition-colors"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Upload button */}
+              {imageFiles.length < MAX_IMAGES && (
+                <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
+                  <span className="text-2xl mb-2">📷</span>
+                  <span className="text-sm font-medium text-gray-600">Click to add photos</span>
+                  <span className="text-xs text-gray-400 mt-1">JPG, PNG or WEBP — max 5MB each</span>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
+              )}
+
+              {imageFiles.length >= MAX_IMAGES && (
+                <p className="text-sm text-gray-400 text-center mt-2">Maximum of {MAX_IMAGES} photos reached.</p>
+              )}
+            </div>
+
             {/* Amenities */}
             <div>
               <h2 className="text-lg font-semibold mb-4 text-gray-800">Amenities</h2>
@@ -284,12 +394,16 @@ const HostApply = () => {
               <p className="text-red-500 text-sm">{error}</p>
             )}
 
+            {uploadProgress && (
+              <p className="text-blue-500 text-sm text-center">{uploadProgress}</p>
+            )}
+
             <Button
               type="submit"
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
-              {loading ? 'Submitting...' : 'Submit Application'}
+              {loading ? (uploadProgress || 'Submitting...') : 'Submit Application'}
             </Button>
 
             <p className="text-xs text-center text-gray-400">
