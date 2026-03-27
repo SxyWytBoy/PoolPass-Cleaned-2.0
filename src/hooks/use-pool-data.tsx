@@ -1,32 +1,53 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Pool } from '@/types';
 
-// Type for host profile data
-interface HostProfile {
-  id?: string;
-  full_name?: string;
-  avatar_url?: string;
-  created_at?: string;
-  [key: string]: any; // For other potential properties
+export interface ProcessedPoolData {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  indoor_outdoor: 'indoor' | 'outdoor' | 'both';
+  images: string[];
+  amenities: { name: string; included: boolean }[];
+  extras: { id: string; name: string; price: number }[];
+  pool_details: {
+    size: string;
+    depth: string;
+    temperature: string;
+    maxGuests: number;
+  };
+  host: {
+    id?: string;
+    name: string;
+    image: string;
+    responseTime: string;
+    joinedDate: string;
+  };
+  available_time_slots: { id: string; time: string }[];
+  available_from?: string;
+  available_to?: string;
+  available_days?: string[];
+  is_active: boolean;
+  created_at: string;
 }
 
-// Mock data for a fallback when API is not available
-const poolDataFallback = {
+const poolDataFallback: ProcessedPoolData = {
   id: "1",
   name: "Luxury Indoor Pool & Spa",
-  description: "This stunning indoor pool and spa is located in a private residence in Kensington. The heated pool is 15m x 5m with a constant depth of 1.4m, perfect for swimming laps or relaxing. The space includes loungers, changing facilities, and optional towel service. The ambient lighting and modern design create a serene atmosphere for your swimming experience.",
+  description: "A stunning heated indoor pool with full spa facilities in the heart of Kensington.",
   location: "Kensington, London",
   price: 45,
   rating: 4.9,
   reviews: 128,
-  indoor_outdoor: "indoor" as const,
+  indoor_outdoor: "indoor",
   images: [
-    "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-    "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-    "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-    "https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1050&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1050&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1050&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1050&q=80&auto=format&fit=crop",
   ],
   amenities: [
     { name: "Heated Pool", included: true },
@@ -47,95 +68,76 @@ const poolDataFallback = {
   pool_details: {
     size: "15m x 5m",
     depth: "1.4m constant",
-    temperature: "29°C / 84°F",
+    temperature: "29°C",
     maxGuests: 8
   },
   host: {
     id: "host-1",
     name: "Emma",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop",
     responseTime: "Within an hour",
     joinedDate: "March 2022"
   },
   available_time_slots: [
     { id: "full-day", time: "Full Day Access" },
   ],
-  host_id: "host-1",
+  available_from: "08:00",
+  available_to: "20:00",
+  available_days: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+  is_active: true,
   created_at: "2023-01-15",
 };
 
-// Type for processed pool data - fixing missing id property in host
-interface ProcessedPoolData extends Omit<Pool, 'host'> {
-  reviewsData?: any[];
-  host: {
-    id?: string | undefined;
-    name: string;
-    image: string;
-    responseTime: string;
-    joinedDate: string;
-  };
-}
-
 export const usePoolData = (id: string | undefined) => {
-  // Fetch pool data
-  const { data: rawPoolData, isLoading } = useQuery({
+  const { data: poolData, isLoading } = useQuery({
     queryKey: ['pool', id],
-    queryFn: async () => {
+    queryFn: async (): Promise<ProcessedPoolData> => {
       try {
         const { data, error } = await supabase
           .from('pools')
-          .select(`
-            *,
-            host:host_id (*)
-          `)
+          .select('*')
           .eq('id', id)
           .single();
-        
+
         if (error) throw error;
-        
-        if (data) {
-          // Process the data to match our expected format
-          const hostData = data.host as HostProfile || {};
-          
-          const processedData = {
-            ...data,
-            amenities: Array.isArray(data.amenities) ? data.amenities : [],
-            extras: Array.isArray(data.extras) ? data.extras : [],
-            pool_details: data.pool_details || {
-              size: "Unknown",
-              depth: "Unknown",
-              temperature: "Unknown",
-              maxGuests: 1
-            },
-            // If host information exists, format it, otherwise use fallback
-            host: {
-              id: hostData?.id,
-              name: hostData?.full_name || "Host",
-              image: hostData?.avatar_url || "https://via.placeholder.com/40",
-              responseTime: "Within a day",
-              joinedDate: hostData?.created_at 
-                ? new Date(hostData.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
-                : "Unknown"
-            },
-            available_time_slots: [
-              { id: "full-day", time: "Full Day Access" },
-            ]
-          };
-          return processedData;
-        }
-        
-        return poolDataFallback;
-      } catch (error) {
-        console.error("Error fetching pool:", error);
+        if (!data) return poolDataFallback;
+
+        // Normalise amenities — stored as string[] in Supabase,
+        // but the detail page expects { name, included }[]
+        const amenities = Array.isArray(data.amenities)
+          ? data.amenities.map((a: string) => ({ name: a, included: true }))
+          : [];
+
+        // Build images array — prefer the images[] column, fall back to image_url
+        const images: string[] =
+          Array.isArray(data.images) && data.images.length > 0
+            ? data.images
+            : data.image_url
+            ? [data.image_url]
+            : [];
+
+        return {
+          ...poolDataFallback,
+          ...data,
+          amenities,
+          images,
+          extras: Array.isArray(data.extras) ? data.extras : poolDataFallback.extras,
+          pool_details: data.pool_details || poolDataFallback.pool_details,
+          host: poolDataFallback.host,
+          available_time_slots: [{ id: "full-day", time: "Full Day Access" }],
+        };
+      } catch (err) {
+        console.error("Error fetching pool:", err);
         return poolDataFallback;
       }
     },
     enabled: !!id,
   });
 
-  const poolData: ProcessedPoolData = rawPoolData as ProcessedPoolData;
-
-  return { poolData, isLoading };
+  return {
+    poolData: poolData ?? poolDataFallback,
+    isLoading,
+  };
 };
 
 export { poolDataFallback };
