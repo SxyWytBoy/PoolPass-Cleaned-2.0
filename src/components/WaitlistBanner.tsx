@@ -8,12 +8,12 @@ const WaitlistBanner = () => {
   if (dismissed) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-xl">
-      <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+    <div className="w-full px-4 py-2 bg-transparent">
+      <div className="relative rounded-2xl overflow-hidden shadow-lg max-w-5xl mx-auto">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 opacity-95" />
 
-        {/* Subtle animated shimmer */}
+        {/* Subtle shimmer */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-pulse" />
 
         {/* Content */}
