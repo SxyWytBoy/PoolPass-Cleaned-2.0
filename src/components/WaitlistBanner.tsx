@@ -17,35 +17,41 @@ const WaitlistBanner = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 animate-pulse" />
 
         {/* Content */}
-        <div className="relative flex items-center justify-between gap-4 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🚀</span>
-            <div>
-              <p className="text-white font-semibold text-sm md:text-base leading-tight">
-                PoolPass is launching soon
-              </p>
-              <p className="text-white/80 text-xs md:text-sm">
-                Get early access to the UK's best private pools
-              </p>
-            </div>
-          </div>
+        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4">
 
-          <div className="flex items-center gap-2 shrink-0">
-            <Link
-              to="/waitlist"
-              className="flex items-center gap-1 bg-white text-blue-600 hover:bg-blue-50 transition-colors text-xs md:text-sm font-semibold px-4 py-2 rounded-xl"
-            >
-              Join waitlist
-              <ArrowRight size={14} />
-            </Link>
+          {/* Text + dismiss row on mobile */}
+          <div className="flex items-start justify-between gap-3 sm:contents">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🚀</span>
+              <div>
+                <p className="text-white font-semibold text-sm md:text-base leading-tight">
+                  PoolPass is launching soon
+                </p>
+                <p className="text-white/80 text-xs md:text-sm">
+                  Get early access to the UK's best private pools
+                </p>
+              </div>
+            </div>
+
+            {/* Dismiss — top right on mobile, inline on larger screens */}
             <button
               onClick={() => setDismissed(true)}
               aria-label="Dismiss banner"
-              className="text-white/70 hover:text-white transition-colors p-1"
+              className="text-white/70 hover:text-white transition-colors p-1 shrink-0 sm:order-last"
             >
               <X size={16} />
             </button>
           </div>
+
+          {/* CTA button — full width on mobile, auto width on larger screens */}
+          <Link
+            to="/waitlist"
+            className="flex items-center justify-center gap-1 bg-white text-blue-600 hover:bg-blue-50 transition-colors text-sm font-semibold px-4 py-2 rounded-xl w-full sm:w-auto shrink-0"
+          >
+            Join waitlist
+            <ArrowRight size={14} />
+          </Link>
+
         </div>
       </div>
     </div>
