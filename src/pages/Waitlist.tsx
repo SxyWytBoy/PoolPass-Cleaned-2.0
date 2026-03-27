@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase';
 
 type UserType = 'swimmer' | 'pool_owner' | '';
 
@@ -13,6 +13,7 @@ const Waitlist = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [userType, setUserType] = useState<UserType>('');
+  const [location, setLocation] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,7 +31,7 @@ const Waitlist = () => {
 
     const { error: supabaseError } = await supabase
       .from('waitlist')
-      .insert([{ name, email, user_type: userType }]);
+      .insert([{ name, email, user_type: userType, location }]);
 
     setLoading(false);
 
@@ -83,6 +84,17 @@ const Waitlist = () => {
                     placeholder="jane@example.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location (Town or City)</Label>
+                  <Input
+                    id="location"
+                    type="text"
+                    placeholder="e.g. Bristol"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
                   />
                 </div>
 
