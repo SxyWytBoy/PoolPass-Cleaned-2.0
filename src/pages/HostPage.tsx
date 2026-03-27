@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,7 +8,7 @@ const HostPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-pool-dark to-pool-primary mt-16 md:mt-20 py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
@@ -17,14 +16,14 @@ const HostPage = () => {
           <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-8">
             Turn your private pool into a source of income. Join our community of hosts earning from their pool facilities.
           </p>
-          <Link to="/sign-up">
+          <Link to="/host-apply">
             <Button className="bg-white text-pool-primary hover:bg-gray-100 px-8">
-              Start Hosting Today
+              List Your Pool
             </Button>
           </Link>
         </div>
       </section>
-      
+
       {/* Why Host Section */}
       <section className="bg-white section-padding">
         <div className="container mx-auto px-4">
@@ -34,7 +33,7 @@ const HostPage = () => {
               Join the growing community of pool owners earning additional income through PoolPass.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
               <div className="w-16 h-16 bg-pool-light rounded-full flex items-center justify-center mx-auto mb-4">
@@ -45,7 +44,7 @@ const HostPage = () => {
               <h3 className="text-xl font-semibold mb-2">Extra Income</h3>
               <p className="text-gray-500">Earn additional income from your pool during times when it would otherwise be unused.</p>
             </div>
-            
+
             <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
               <div className="w-16 h-16 bg-pool-light rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pool-primary">
@@ -55,7 +54,7 @@ const HostPage = () => {
               <h3 className="text-xl font-semibold mb-2">Flexible Scheduling</h3>
               <p className="text-gray-500">You control when your pool is available for bookings - choose days and hours that work for you.</p>
             </div>
-            
+
             <div className="bg-white rounded-xl p-6 text-center shadow-sm border border-gray-100">
               <div className="w-16 h-16 bg-pool-light rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-pool-primary">
@@ -68,7 +67,7 @@ const HostPage = () => {
           </div>
         </div>
       </section>
-      
+
       {/* How to Become a Host */}
       <section className="bg-gray-50 section-padding">
         <div className="container mx-auto px-4">
@@ -78,7 +77,7 @@ const HostPage = () => {
               Join our platform in 3 easy steps and start earning from your pool.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="relative">
               <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
@@ -87,23 +86,23 @@ const HostPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-4 mt-2">Create Your Listing</h3>
                 <p className="text-gray-600">
-                  Sign up as a host and create your pool listing with detailed information and high-quality photos. Highlight all the unique features and amenities your pool offers.
+                  Submit your pool details using our simple application form. Add your location, amenities, availability, and pricing.
                 </p>
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
                 <div className="absolute -top-4 -left-4 w-10 h-10 bg-pool-primary text-white rounded-full flex items-center justify-center font-bold">
                   2
                 </div>
-                <h3 className="text-xl font-semibold mb-4 mt-2">Set Your Availability</h3>
+                <h3 className="text-xl font-semibold mb-4 mt-2">Get Approved</h3>
                 <p className="text-gray-600">
-                  Choose when your pool is available for guests. Update your calendar, set pricing, and define any specific rules or requirements for guests.
+                  Our team reviews your application within 48 hours. Once approved, your listing goes live on the PoolPass platform.
                 </p>
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm h-full">
                 <div className="absolute -top-4 -left-4 w-10 h-10 bg-pool-primary text-white rounded-full flex items-center justify-center font-bold">
@@ -111,34 +110,34 @@ const HostPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold mb-4 mt-2">Start Earning</h3>
                 <p className="text-gray-600">
-                  Once your listing is live, you'll start receiving booking requests. Confirm bookings, welcome your guests, and earn income from your pool.
+                  Once your listing is live, swimmers can discover and book your pool. Payments are made within 24 hours of each completed visit.
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="text-center mt-12">
-            <Link to="/sign-up">
+            <Link to="/host-apply">
               <Button className="bg-pool-primary hover:bg-pool-secondary text-white px-8">
-                Register as a Host
+                Apply to List Your Pool
               </Button>
             </Link>
           </div>
         </div>
       </section>
-      
+
       {/* Testimonials Section */}
       <section className="bg-white section-padding">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center">What Our Hosts Say</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-gray-50 p-6 rounded-xl">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gray-300 rounded-full mr-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80" 
-                    alt="Host" 
+                  <img
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop"
+                    alt="Host"
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 </div>
@@ -148,16 +147,16 @@ const HostPage = () => {
                 </div>
               </div>
               <p className="text-gray-600 italic">
-                "I've been able to offset the costs of maintaining my pool by hosting guests through PoolPass. It's been a fantastic experience meeting new people, and the platform makes it so easy to manage bookings."
+                "I've been able to offset the costs of maintaining my pool by hosting guests through PoolPass. It's been a fantastic experience and the platform makes it so easy to manage bookings."
               </p>
             </div>
-            
+
             <div className="bg-gray-50 p-6 rounded-xl">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-gray-300 rounded-full mr-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80" 
-                    alt="Host" 
+                  <img
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80&auto=format&fit=crop"
+                    alt="Host"
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 </div>
@@ -167,34 +166,34 @@ const HostPage = () => {
                 </div>
               </div>
               <p className="text-gray-600 italic">
-                "As a hotel owner, PoolPass has allowed us to generate additional revenue from our pool facilities during off-peak hours. The verification process was smooth, and we've had nothing but positive experiences with guests."
+                "As a hotel owner, PoolPass has allowed us to generate additional revenue from our pool during off-peak hours. The verification process was smooth and we've had nothing but positive experiences."
               </p>
             </div>
           </div>
         </div>
       </section>
-      
+
       {/* FAQ Section */}
       <section className="bg-gray-50 section-padding">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center">Host FAQ</h2>
-          
+
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="border-b border-gray-200 pb-6">
               <h3 className="text-xl font-semibold mb-2">How much can I earn from hosting my pool?</h3>
-              <p className="text-gray-600">Earnings vary based on your location, pool features, and availability. Hosts in popular areas with well-maintained pools typically earn between £100-£300 per day.</p>
+              <p className="text-gray-600">Earnings vary based on your location, pool features, and availability. Hosts in popular areas with well-maintained pools typically earn between £100 and £300 per day.</p>
             </div>
-            
+
             <div className="border-b border-gray-200 pb-6">
               <h3 className="text-xl font-semibold mb-2">What insurance protection is provided?</h3>
               <p className="text-gray-600">We provide a comprehensive insurance policy that covers damage to your property and liability protection during guest bookings up to £1 million.</p>
             </div>
-            
+
             <div className="border-b border-gray-200 pb-6">
               <h3 className="text-xl font-semibold mb-2">What are the safety requirements for listing my pool?</h3>
               <p className="text-gray-600">Your pool must comply with local safety regulations. We require adequate safety equipment, clear depth markings, and proper maintenance. Our team will guide you through the verification process.</p>
             </div>
-            
+
             <div className="border-b border-gray-200 pb-6">
               <h3 className="text-xl font-semibold mb-2">How quickly will I receive payment?</h3>
               <p className="text-gray-600">Hosts receive payments within 24 hours after a guest's visit is completed, directly to your nominated bank account.</p>
@@ -202,7 +201,7 @@ const HostPage = () => {
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-pool-dark to-pool-primary section-padding">
         <div className="container mx-auto px-4 text-center">
@@ -210,14 +209,14 @@ const HostPage = () => {
           <p className="text-white/90 text-lg max-w-2xl mx-auto mb-8">
             Join our growing community of hosts and start earning from your swimming pool today.
           </p>
-          <Link to="/sign-up">
+          <Link to="/host-apply">
             <Button className="bg-white text-pool-primary hover:bg-gray-100 px-8 py-6 text-lg">
-              Sign Up as a Host
+              Apply to List Your Pool
             </Button>
           </Link>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
