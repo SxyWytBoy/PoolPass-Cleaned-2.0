@@ -17,7 +17,7 @@ const poolsData = [
     price: 45,
     rating: 4.9,
     reviews: 128,
-    image: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "indoor" as const,
     amenities: ["Heated", "Loungers", "Towels Provided", "Jacuzzi"]
   },
@@ -28,7 +28,7 @@ const poolsData = [
     price: 60,
     rating: 4.7,
     reviews: 85,
-    image: "https://images.unsplash.com/photo-1477120292453-dbba2d987c24?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "outdoor" as const,
     amenities: ["Heated", "City View", "Bar Service", "Loungers"]
   },
@@ -39,7 +39,7 @@ const poolsData = [
     price: 38,
     rating: 4.8,
     reviews: 63,
-    image: "https://images.unsplash.com/photo-1551123847-4041291bec0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "both" as const,
     amenities: ["Garden Access", "Changing Rooms", "Food Available"]
   },
@@ -50,7 +50,7 @@ const poolsData = [
     price: 55,
     rating: 4.6,
     reviews: 42,
-    image: "https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "indoor" as const,
     amenities: ["Heated", "Sauna", "Spa", "Bar Service"]
   },
@@ -61,7 +61,7 @@ const poolsData = [
     price: 35,
     rating: 4.5,
     reviews: 29,
-    image: "https://images.unsplash.com/photo-1529290130-4ca3753253ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1463130456064-df74d816d25c?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "indoor" as const,
     amenities: ["Heated", "WiFi", "Changing Rooms"]
   },
@@ -72,7 +72,7 @@ const poolsData = [
     price: 42,
     rating: 4.9,
     reviews: 56,
-    image: "https://images.unsplash.com/photo-1519046004466-a539881296e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "outdoor" as const,
     amenities: ["Heated", "Loungers", "Nature Views", "BBQ Area"]
   },
@@ -115,20 +115,14 @@ const Pools = () => {
   
   // Filter pools based on selected filters
   const filteredPools = poolsData.filter(pool => {
-    // Filter by price
     if (pool.price < priceRange[0] || pool.price > priceRange[1]) return false;
-    
-    // Filter by pool type
     if (poolType !== "all" && pool.indoorOutdoor !== poolType) return false;
-    
-    // Filter by amenities
     if (selectedAmenities.length > 0) {
       const hasAllAmenities = selectedAmenities.every(amenity => 
         pool.amenities.includes(amenity)
       );
       if (!hasAllAmenities) return false;
     }
-    
     return true;
   });
   
@@ -156,18 +150,15 @@ const Pools = () => {
       <Navbar />
       
       <main className="flex-grow pt-20">
-        {/* Search Header */}
         <SearchHeader />
         
         <div className="container mx-auto px-4 py-8">
           <div className="lg:flex gap-6">
-            {/* Mobile Filter Toggle */}
             <MobileFilterToggle 
               isFilterOpen={isFilterOpen} 
               toggleFilter={() => setIsFilterOpen(!isFilterOpen)} 
             />
             
-            {/* Filters Sidebar */}
             <aside className={`lg:w-1/4 space-y-6 mb-8 lg:mb-0 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
               <PoolFilters 
                 priceRange={priceRange}
@@ -181,16 +172,13 @@ const Pools = () => {
               />
             </aside>
             
-            {/* Pool Listings */}
             <div className="lg:w-3/4">
-              {/* Results Header */}
               <PoolResultsHeader 
                 count={sortedPools.length}
                 sortOrder={sortOrder}
                 onSortChange={handleSortChange}
               />
               
-              {/* Pool Grid */}
               <PoolGrid 
                 pools={sortedPools}
                 resetFilters={resetFilters}
