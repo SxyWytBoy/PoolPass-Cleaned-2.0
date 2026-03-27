@@ -18,6 +18,7 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 import HostPage from "./pages/HostPage";
 import SafetyPage from "./pages/SafetyPage";
 import Waitlist from "./pages/Waitlist";
+import HostApply from "./pages/HostApply";
 
 const queryClient = new QueryClient();
 
@@ -34,33 +35,34 @@ const App = () => (
             <Route path="/pools/:id" element={<PoolDetail />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/host" element={<HostPage />} />
+            <Route path="/host-apply" element={<HostApply />} />
             <Route path="/safety" element={<SafetyPage />} />
             <Route path="/waitlist" element={<Waitlist />} />
             <Route path="/sign-in" element={<SignIn />} />
             <Route path="/sign-up" element={<SignUp />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/host-dashboard" 
+            <Route
+              path="/host-dashboard"
               element={
                 <ProtectedRoute userType="host">
                   <HostDashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/crm-settings" 
+            <Route
+              path="/crm-settings"
               element={
                 <ProtectedRoute userType="host">
                   <CrmSettings />
                 </ProtectedRoute>
-              } 
+              }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
