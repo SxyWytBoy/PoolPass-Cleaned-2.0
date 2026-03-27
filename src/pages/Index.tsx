@@ -17,7 +17,7 @@ const featuredPools = [
     price: 45,
     rating: 4.9,
     reviews: 128,
-    image: "https://images.unsplash.com/photo-1572331165267-854da2b10ccc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "indoor" as const,
     amenities: ["Heated", "Loungers", "Towels Provided", "Jacuzzi"]
   },
@@ -28,7 +28,7 @@ const featuredPools = [
     price: 60,
     rating: 4.7,
     reviews: 85,
-    image: "https://images.unsplash.com/photo-1477120292453-dbba2d987c24?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "outdoor" as const,
     amenities: ["Heated", "City View", "Bar Service", "Loungers"]
   },
@@ -39,7 +39,7 @@ const featuredPools = [
     price: 38,
     rating: 4.8,
     reviews: 63,
-    image: "https://images.unsplash.com/photo-1551123847-4041291bec0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1050&q=80&auto=format&fit=crop",
     indoorOutdoor: "both" as const,
     amenities: ["Garden Access", "Changing Rooms", "Food Available"]
   }
@@ -120,7 +120,7 @@ const Index = () => {
               {/* Image Side */}
               <div className="relative h-64 md:h-auto">
                 <img 
-                  src="https://images.unsplash.com/photo-1615397349754-cfa2066a298e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80" 
+                  src="https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1050&q=80&auto=format&fit=crop"
                   alt="Swimming Pool" 
                   className="w-full h-full object-cover"
                 />
