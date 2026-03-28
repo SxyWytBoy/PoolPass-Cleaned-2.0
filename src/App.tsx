@@ -12,6 +12,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import HostDashboard from "./pages/HostDashboard";
+import HostLogin from "./pages/HostLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CrmSettings from "./pages/CrmSettings";
 import HowItWorksPage from "./pages/HowItWorksPage";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/host" element={<HostPage />} />
             <Route path="/host-apply" element={<HostApply />} />
+            <Route path="/host-login" element={<HostLogin />} />
             <Route path="/safety" element={<SafetyPage />} />
             <Route path="/waitlist" element={<Waitlist />} />
             <Route path="/sign-in" element={<SignIn />} />
@@ -53,9 +55,7 @@ const App = () => (
             <Route
               path="/host-dashboard"
               element={
-                <ProtectedRoute userType="host">
-                  <HostDashboard />
-                </ProtectedRoute>
+                <HostDashboard />
               }
             />
             <Route
