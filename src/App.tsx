@@ -19,6 +19,7 @@ import HostPage from "./pages/HostPage";
 import SafetyPage from "./pages/SafetyPage";
 import Waitlist from "./pages/Waitlist";
 import HostApply from "./pages/HostApply";
+import Watermark from "./components/Watermark";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
       <AuthProvider>
         <Toaster />
         <Sonner />
+        <Watermark />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
