@@ -18,7 +18,7 @@ const Watermark = () => {
         style={{
           fontSize: '5rem',
           fontWeight: 700,
-          color: 'rgba(0, 0, 0, 0.04)',
+          color: 'rgba(0, 0, 0, 0.12)',
           textTransform: 'uppercase',
           letterSpacing: '0.15em',
           transform: 'rotate(-35deg)',
