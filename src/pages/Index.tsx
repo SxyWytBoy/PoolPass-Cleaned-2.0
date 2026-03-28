@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -8,55 +8,47 @@ import Testimonials from '@/components/Testimonials';
 import Footer from '@/components/Footer';
 import PoolCard from '@/components/PoolCard';
 import WaitlistBanner from '@/components/WaitlistBanner';
+import { supabase } from '@/lib/supabase';
 
-// Mock data for featured pools
-const featuredPools = [
-  {
-    id: "1",
-    name: "Luxury Indoor Pool & Spa",
-    location: "Kensington, London",
-    price: 45,
-    rating: 4.9,
-    reviews: 128,
-    image: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=1050&q=80&auto=format&fit=crop",
-    indoorOutdoor: "indoor" as const,
-    amenities: ["Heated", "Loungers", "Towels Provided", "Jacuzzi"]
-  },
-  {
-    id: "2",
-    name: "Rooftop Infinity Pool",
-    location: "Manchester City Centre",
-    price: 60,
-    rating: 4.7,
-    reviews: 85,
-    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1050&q=80&auto=format&fit=crop",
-    indoorOutdoor: "outdoor" as const,
-    amenities: ["Heated", "City View", "Bar Service", "Loungers"]
-  },
-  {
-    id: "3",
-    name: "Country House Pool & Gardens",
-    location: "Cotswolds",
-    price: 38,
-    rating: 4.8,
-    reviews: 63,
-    image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1050&q=80&auto=format&fit=crop",
-    indoorOutdoor: "both" as const,
-    amenities: ["Garden Access", "Changing Rooms", "Food Available"]
-  }
-];
+interface Pool {
+  id: string;
+  name: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  image_url: string;
+  indoor_outdoor: 'indoor' | 'outdoor' | 'both';
+  amenities: string[];
+}
 
 const Index = () => {
+  const [featuredPools, setFeaturedPools] = useState<Pool[]>([]);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from('pools')
+        .select('*')
+        .eq('is_active', true)
+        .order('rating', { ascending: false })
+        .limit(3);
+
+      if (data) setFeaturedPools(data);
+    };
+
+    fetchFeatured();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <WaitlistBanner />
       <Navbar />
-      
-      {/* Hero Section with additional top margin class */}
+
       <div className="mt-10 md:mt-12">
         <HeroSection />
       </div>
-      
+
       {/* Featured Pools Section */}
       <section className="bg-white section-padding">
         <div className="container mx-auto px-4">
@@ -66,7 +58,7 @@ const Index = () => {
               View all pools
             </Link>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredPools.map((pool) => (
               <PoolCard
@@ -77,13 +69,13 @@ const Index = () => {
                 price={pool.price}
                 rating={pool.rating}
                 reviews={pool.reviews}
-                image={pool.image}
-                indoorOutdoor={pool.indoorOutdoor}
+                image={pool.image_url}
+                indoorOutdoor={pool.indoor_outdoor}
                 amenities={pool.amenities}
               />
             ))}
           </div>
-          
+
           <div className="mt-10 text-center">
             <Link to="/pools">
               <Button className="bg-pool-primary hover:bg-pool-secondary text-white">
@@ -93,16 +85,14 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
-      {/* How It Works Section */}
+
       <HowItWorks />
-      
+
       {/* Host CTA Section */}
       <section className="bg-white section-padding">
         <div className="container mx-auto px-4">
           <div className="bg-gradient-to-r from-pool-dark to-pool-primary rounded-2xl overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2">
-              {/* Text Content */}
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
                   Own a Pool? Become a Host
@@ -118,12 +108,11 @@ const Index = () => {
                   </Link>
                 </div>
               </div>
-              
-              {/* Image Side */}
+
               <div className="relative h-64 md:h-auto">
-                <img 
-                  src="https://images.unsplash.com/photo-1598902108854-10e335adac99?w=1050&q=80&auto=format&fit=crop"
-                  alt="Swimming Pool" 
+                <img
+                  src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1050&q=80&auto=format&fit=crop"
+                  alt="Swimming Pool"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -131,11 +120,8 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
-      {/* Testimonials Section */}
+
       <Testimonials />
-      
-      {/* Footer */}
       <Footer />
     </div>
   );
