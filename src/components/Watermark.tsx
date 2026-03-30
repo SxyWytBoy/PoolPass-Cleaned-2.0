@@ -1,4 +1,21 @@
+import { useEffect, useState } from 'react';
+
 const Watermark = () => {
+  const [fontSize, setFontSize] = useState('5rem');
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 480) setFontSize('2rem');
+      else if (w < 768) setFontSize('3rem');
+      else if (w < 1024) setFontSize('4rem');
+      else setFontSize('5rem');
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return (
     <div
       style={{
@@ -16,7 +33,7 @@ const Watermark = () => {
     >
       <span
         style={{
-          fontSize: '5rem',
+          fontSize,
           fontWeight: 700,
           color: 'rgba(0, 0, 0, 0.12)',
           textTransform: 'uppercase',
