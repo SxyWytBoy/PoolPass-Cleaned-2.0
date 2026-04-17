@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
               <img
                 src="/logo.png"
                 alt="PoolPass Logo"
-                className="h-14 w-auto"
+                className="h-24 md:h-28 w-auto"
               />
             </div>
 
