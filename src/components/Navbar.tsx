@@ -18,7 +18,7 @@ const Navbar = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm">
-      <div className="container mx-auto px-4 py-2">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
 
           {/* Logo */}
@@ -26,7 +26,7 @@ const Navbar = () => {
             <img
               src="/logo.png"
               alt="PoolPass Logo"
-              className="h-12 md:h-14 w-auto"
+              className="h-16 md:h-20 w-auto"
             />
           </Link>
 
