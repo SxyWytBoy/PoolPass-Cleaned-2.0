@@ -26,7 +26,7 @@ const Navbar = () => {
             <img
               src="/logo.png"
               alt="PoolPass Logo"
-              className="h-16 md:h-20 w-auto"
+              className="h-12 md:h-14 w-auto"
             />
           </Link>
 
