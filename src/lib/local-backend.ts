@@ -13,7 +13,7 @@ type Tables = Record<string, Row[]>;
 type LocalError = { message: string; code?: string };
 type Result<T = unknown> = { data: T; error: LocalError | null; count?: number | null };
 
-const DB_KEY = 'poolpass:db:v1';
+const DB_KEY = 'poolpass:db:v3';
 const USERS_KEY = 'poolpass:users:v1';
 const SESSION_KEY = 'poolpass:session:v1';
 const FILES_KEY = 'poolpass:files:v1';
@@ -78,42 +78,11 @@ const seedTables = (): Tables => ({
   pools: clone(seedPools) as unknown as Row[],
   profiles: clone(seedProfiles) as unknown as Row[],
   reviews: clone(seedReviews) as unknown as Row[],
-  bookings: [
-    {
-      id: 'b-demo-1',
-      pool_id: '2',
-      user_id: 'guest-demo',
-      date: futureDate(10),
-      time_slot: 'Full day access',
-      guests: 2,
-      extras: ['daybed'],
-      total_price: 140,
-      status: 'confirmed',
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: 'b-demo-2',
-      pool_id: '1',
-      user_id: 'guest-michael',
-      date: futureDate(5),
-      time_slot: 'Morning (08:00 - 13:00)',
-      guests: 2,
-      extras: ['towels'],
-      total_price: 95,
-      status: 'pending',
-      created_at: new Date().toISOString(),
-    },
-  ],
+  bookings: [],
   waitlist: [],
   host_applications: [],
   contact_messages: [],
 });
-
-function futureDate(days: number) {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
-}
 
 let tables: Tables | null = null;
 

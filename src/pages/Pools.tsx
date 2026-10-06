@@ -11,6 +11,8 @@ import PoolResultsHeader from '@/components/pools/PoolResultsHeader';
 import SearchHeader from '@/components/pools/SearchHeader';
 import { useToast } from '@/components/ui/use-toast';
 import { AMENITY_OPTIONS, fetchActivePools, isOpenOn, parseDateString, poolImage } from '@/lib/pools';
+import { unclaimedVenues, VENUES_CHECKED } from '@/lib/venues';
+import VenueCard from '@/components/VenueCard';
 
 const Pools = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,6 +90,15 @@ const Pools = () => {
       }));
   }, [pools, priceRange, poolType, locationQuery, date, selectedAmenities, sortOrder]);
 
+  // Real hotel pools without a PoolPass listing yet. Only location and pool type apply to them.
+  const venues = useMemo(() => {
+    const query = locationQuery.toLowerCase();
+    return unclaimedVenues(pools.map((p) => p.venue_slug)).filter((venue) => {
+      if (poolType !== 'all' && venue.indoorOutdoor !== poolType) return false;
+      return !query || `${venue.name} ${venue.area} ${venue.region}`.toLowerCase().includes(query);
+    });
+  }, [pools, locationQuery, poolType]);
+
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOrder(e.target.value);
   };
@@ -138,14 +149,37 @@ const Pools = () => {
                   We couldn't load pools right now. Check your connection and refresh the page.
                 </div>
               ) : (
-                <>
-                  <PoolResultsHeader
-                    count={sortedPools.length}
-                    sortOrder={sortOrder}
-                    onSortChange={handleSortChange}
-                  />
-                  <PoolGrid pools={sortedPools} resetFilters={resetFilters} />
-                </>
+                <div className="space-y-12">
+                  {(sortedPools.length > 0 || venues.length === 0) && (
+                    <section>
+                      <PoolResultsHeader
+                        count={sortedPools.length}
+                        sortOrder={sortOrder}
+                        onSortChange={handleSortChange}
+                      />
+                      <PoolGrid pools={sortedPools} resetFilters={resetFilters} />
+                    </section>
+                  )}
+
+                  {venues.length > 0 && (
+                    <section>
+                      <div className="mb-4">
+                        <h2 className="text-xl font-semibold">Hotel pools with day access</h2>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {venues.length} UK hotel {venues.length === 1 ? 'pool' : 'pools'} that welcome day visitors. Book directly with the hotel for now; they'll become bookable here as hotels join PoolPass.
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {venues.map((venue) => (
+                          <VenueCard key={venue.slug} venue={venue} />
+                        ))}
+                      </div>
+                      <p className="mt-4 text-xs text-gray-500">
+                        PoolPass is not affiliated with these hotels. Images are illustrative. Details checked {VENUES_CHECKED}.
+                      </p>
+                    </section>
+                  )}
+                </div>
               )}
             </div>
           </div>

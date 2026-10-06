@@ -42,6 +42,8 @@ export interface PoolRow {
   available_days: string[]
   is_active: boolean
   host_id: string | null
+  /** Set when this listing is the bookable version of a venue in src/lib/venues.ts. */
+  venue_slug: string | null
   created_at: string
 }
 
@@ -100,6 +102,7 @@ export interface HostApplicationRow {
   host_email: string
   host_phone: string | null
   images: string[]
+  venue_slug: string | null
   status: 'pending' | 'approved' | 'rejected'
   created_at: string
 }

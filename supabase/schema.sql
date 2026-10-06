@@ -62,6 +62,10 @@ create table if not exists public.pools (
   created_at timestamptz not null default now()
 );
 
+-- Links a listing to a real hotel in src/lib/venues.ts. Only admins can set it (see trigger below).
+alter table public.pools add column if not exists venue_slug text;
+create unique index if not exists pools_venue_slug_key on public.pools (venue_slug) where venue_slug is not null;
+
 create index if not exists pools_host_id_idx on public.pools (host_id);
 create index if not exists pools_is_active_idx on public.pools (is_active);
 
@@ -148,6 +152,33 @@ create table if not exists public.host_applications (
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at timestamptz not null default now()
 );
+
+alter table public.host_applications add column if not exists venue_slug text;
+
+-- Stop hosts linking their listing to a real hotel they don't represent:
+-- venue_slug keeps its old value unless an admin (or the service role) changes it.
+create or replace function public.protect_venue_slug()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if auth.uid() is not null
+     and not exists (select 1 from public.profiles p where p.id = auth.uid() and p.user_type = 'admin') then
+    if tg_op = 'INSERT' then
+      new.venue_slug := null;
+    else
+      new.venue_slug := old.venue_slug;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists pools_protect_venue_slug on public.pools;
+create trigger pools_protect_venue_slug
+  before insert or update on public.pools
+  for each row execute function public.protect_venue_slug();
 
 create table if not exists public.contact_messages (
   id uuid primary key default gen_random_uuid(),

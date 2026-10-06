@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import HowItWorks from '@/components/HowItWorks';
-import Testimonials from '@/components/Testimonials';
+import WhyPoolPass from '@/components/WhyPoolPass';
+import VenueCard from '@/components/VenueCard';
+import { unclaimedVenues } from '@/lib/venues';
 import Footer from '@/components/Footer';
 import PoolCard from '@/components/PoolCard';
 import WaitlistBanner from '@/components/WaitlistBanner';
@@ -14,6 +16,8 @@ import { FALLBACK_POOL_IMAGES, fetchActivePools, poolImage } from '@/lib/pools';
 const Index = () => {
   const { data: pools = [] } = useQuery({ queryKey: ['pools'], queryFn: fetchActivePools });
   const featuredPools = pools.slice(0, 3);
+  // Fill any empty slots with real hotel pools that aren't on PoolPass yet.
+  const featuredVenues = unclaimedVenues(pools.map((p) => p.venue_slug)).slice(0, Math.max(0, 3 - featuredPools.length));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -49,6 +53,9 @@ const Index = () => {
                 amenities={pool.amenities}
                 fallbackImage={FALLBACK_POOL_IMAGES[pool.indoor_outdoor]}
               />
+            ))}
+            {featuredVenues.map((venue) => (
+              <VenueCard key={venue.slug} venue={venue} />
             ))}
           </div>
 
@@ -97,7 +104,7 @@ const Index = () => {
         </div>
       </section>
 
-      <Testimonials />
+      <WhyPoolPass />
       <Footer />
     </div>
   );

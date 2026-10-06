@@ -12,9 +12,10 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { supabase, isLocalBackend } from '@/lib/supabase';
 import { AMENITY_OPTIONS, DAYS_OF_WEEK, formatPrice, parseDateString, toDateString } from '@/lib/pools';
 import { STATUS_LABELS, STATUS_STYLES } from '@/lib/booking-status';
+import { VENUES } from '@/lib/venues';
 import type { BookingRow, BookingStatus, HostApplicationRow, PoolDetails, PoolExtra, PoolRow, ProfileRow } from '@/types/supabase';
 
 const MAX_IMAGES = 5;
@@ -52,6 +53,7 @@ const HostDashboard = () => {
   const [details, setDetails] = useState<PoolDetails>(EMPTY_DETAILS);
   const [extras, setExtras] = useState<PoolExtra[]>([]);
   const [isActive, setIsActive] = useState(false);
+  const [venueSlug, setVenueSlug] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
@@ -95,6 +97,7 @@ const HostDashboard = () => {
     setDetails({ ...EMPTY_DETAILS, ...(pool.pool_details || {}) });
     setExtras(Array.isArray(pool.extras) ? pool.extras : []);
     setIsActive(pool.is_active !== false);
+    setVenueSlug(pool.venue_slug ?? '');
     setImages(pool.images?.length ? pool.images : pool.image_url ? [pool.image_url] : []);
     setNewImageFiles([]);
     setNewImagePreviews([]);
@@ -217,6 +220,7 @@ const HostDashboard = () => {
           pool_details: details,
           extras: extras.filter(x => x.name.trim()),
           is_active: isActive,
+          venue_slug: venueSlug || null,
           images: allImages,
           image_url: allImages[0] || null,
         })
@@ -267,6 +271,7 @@ const HostDashboard = () => {
           rating: 0,
           reviews: 0,
           is_active: false,
+          venue_slug: application?.venue_slug ?? null,
         })
         .select('id')
         .single();
@@ -485,6 +490,28 @@ const HostDashboard = () => {
                       <p className="text-sm text-gray-500">When on, guests can find and book this pool.</p>
                     </div>
                     <Switch id="is-active" checked={isActive} onCheckedChange={setIsActive} />
+                  </div>
+                )}
+
+                {activeTab === 'details' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="venue-link">Is this pool at one of these hotels?</Label>
+                    <select
+                      id="venue-link"
+                      value={venueSlug}
+                      onChange={e => setVenueSlug(e.target.value)}
+                      className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm bg-white"
+                    >
+                      <option value="">No, it's not listed</option>
+                      {VENUES.map(v => (
+                        <option key={v.slug} value={v.slug}>{v.name} ({v.area})</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500">
+                      {isLocalBackend
+                        ? "When your listing is live, it replaces that hotel's information page on PoolPass."
+                        : "We confirm you work at the hotel before linking. Once linked and live, your listing replaces the hotel's information page."}
+                    </p>
                   </div>
                 )}
 

@@ -23,6 +23,7 @@ import Waitlist from "./pages/Waitlist";
 import HostApply from "./pages/HostApply";
 import Watermark from "./components/Watermark";
 import InfoPage from "./pages/InfoPage";
+import VenuePage from "./pages/VenuePage";
 import ScrollToTop from "./components/ScrollToTop";
 
 const INFO_PAGES = [
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/pools" element={<Pools />} />
             <Route path="/pools/:id" element={<PoolDetail />} />
+            <Route path="/venues/:slug" element={<VenuePage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/host" element={<HostPage />} />
             <Route path="/host-apply" element={<HostApply />} />

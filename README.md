@@ -41,6 +41,18 @@ cd PoolPass-Cleaned-2.0
 npm install
 ```
 
+### Real hotel venues and partner listings
+
+Until hotels join, the site lists real UK hotel pools that offer day access
+(`src/lib/venues.ts`). These are information-only: facts, a link to the hotel's own
+website, an illustrative image, and no prices, reviews or booking. PoolPass is not
+affiliated with them, and the details should be re-checked before launch.
+
+When a hotel becomes a partner, its host links their listing to the venue in the host
+dashboard. Once that listing is live, it replaces the venue's information page. On
+Supabase, only an admin can set that link (`pools.venue_slug`), so a host can't claim
+a hotel they don't represent.
+
 ### Demo mode (no setup needed)
 
 If no Supabase credentials are set, PoolPass runs on a built-in **browser demo backend**

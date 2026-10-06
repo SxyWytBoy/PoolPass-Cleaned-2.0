@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
 import { X } from 'lucide-react';
+import { findVenue } from '@/lib/venues';
 
 const amenitiesOptions = [
   "Heated", "Loungers", "Towels Provided", "Food Available",
@@ -26,8 +27,10 @@ const HostApply = () => {
   const [error, setError] = useState('');
 
   // Pool details
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
+  const [searchParams] = useSearchParams();
+  const venue = findVenue(searchParams.get('venue'));
+  const [name, setName] = useState(venue?.name ?? '');
+  const [location, setLocation] = useState(venue?.area ?? '');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [indoorOutdoor, setIndoorOutdoor] = useState<'indoor' | 'outdoor' | 'both' | ''>('');
@@ -148,6 +151,7 @@ const HostApply = () => {
           host_email: hostEmail.trim().toLowerCase(),
           host_phone: hostPhone,
           images: imageUrls,
+          venue_slug: venue?.slug ?? null,
           status: 'pending',
         }]);
 
@@ -199,6 +203,11 @@ const HostApply = () => {
             <p className="text-gray-600 text-lg">
               Fill in the details below and we'll review your application within 48 hours.
             </p>
+            {venue && (
+              <p className="mt-4 rounded-lg bg-pool-light/50 px-4 py-3 text-sm text-pool-dark">
+                Applying for <strong>{venue.name}</strong>. Once approved, your bookable listing replaces the venue's information page on PoolPass.
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-2xl shadow-md p-8">

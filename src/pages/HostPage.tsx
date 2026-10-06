@@ -126,48 +126,23 @@ const HostPage = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* What you control */}
       <section className="bg-white section-padding">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">What Our Hosts Say</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">You Stay in Control</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-gray-50 p-6 rounded-xl">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gray-300 rounded-full mr-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop"
-                    alt="Host"
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Sarah Johnson</h4>
-                  <p className="text-sm text-gray-500">London Host since 2023</p>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">
-                "I've been able to offset the costs of maintaining my pool by hosting guests through PoolPass. It's been a fantastic experience and the platform makes it so easy to manage bookings."
-              </p>
+              <h3 className="font-semibold text-lg mb-2">Your prices</h3>
+              <p className="text-gray-600">Set a price per person for the day. Half-day options are worked out for you, and you can add paid extras like towel hire.</p>
             </div>
-
             <div className="bg-gray-50 p-6 rounded-xl">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gray-300 rounded-full mr-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80&auto=format&fit=crop"
-                    alt="Host"
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Mark Davies</h4>
-                  <p className="text-sm text-gray-500">Manchester Host since 2022</p>
-                </div>
-              </div>
-              <p className="text-gray-600 italic">
-                "As a hotel owner, PoolPass has allowed us to generate additional revenue from our pool during off-peak hours. The verification process was smooth and we've had nothing but positive experiences."
-              </p>
+              <h3 className="font-semibold text-lg mb-2">Your hours</h3>
+              <p className="text-gray-600">Choose the days and times you open, and the maximum number of guests. Change them whenever you like.</p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-xl">
+              <h3 className="font-semibold text-lg mb-2">Your approval</h3>
+              <p className="text-gray-600">Every booking arrives as a request. You accept or decline it from your dashboard before the guest is charged.</p>
             </div>
           </div>
         </div>
@@ -181,12 +156,12 @@ const HostPage = () => {
           <div className="max-w-3xl mx-auto space-y-6">
             <div className="border-b border-gray-200 pb-6">
               <h3 className="text-xl font-semibold mb-2">How much can I earn from hosting my pool?</h3>
-              <p className="text-gray-600">Earnings vary based on your location, pool features, and availability. Hosts in popular areas with well-maintained pools typically earn between £100 and £300 per day.</p>
+              <p className="text-gray-600">You set your own price per person and choose which days and hours you open, so your earnings depend on your pool, location and availability. You can change your price at any time from the host dashboard.</p>
             </div>
 
             <div className="border-b border-gray-200 pb-6">
-              <h3 className="text-xl font-semibold mb-2">What insurance protection is provided?</h3>
-              <p className="text-gray-600">We provide a comprehensive insurance policy that covers damage to your property and liability protection during guest bookings up to £1 million.</p>
+              <h3 className="text-xl font-semibold mb-2">Do I need insurance?</h3>
+              <p className="text-gray-600">Yes. Before hosting paying guests, check that your insurance covers public liability and damage for this kind of use. Hotels usually have this in place already. We'll share recommended insurance options for private hosts at launch.</p>
             </div>
 
             <div className="border-b border-gray-200 pb-6">
