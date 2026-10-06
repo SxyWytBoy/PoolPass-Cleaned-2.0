@@ -1,30 +1,30 @@
-
 import React from 'react';
+import { formatPrice } from '@/lib/pools';
 
 interface PriceSummaryProps {
-  basePrice: number;
+  accessPrice: number;
+  guests: number;
   extrasPrice: number;
+  totalPrice: number;
   selectedExtras: string[];
 }
 
-const PriceSummary = ({ basePrice, extrasPrice, selectedExtras }: PriceSummaryProps) => {
-  const totalPrice = basePrice + extrasPrice;
-
+const PriceSummary = ({ accessPrice, guests, extrasPrice, totalPrice, selectedExtras }: PriceSummaryProps) => {
   return (
-    <div className="border-t border-gray-200 pt-4 mb-4">
+    <div className="border-t border-gray-200 pt-4 mb-4 tabular-nums">
       <div className="flex justify-between mb-2">
-        <span>Base price</span>
-        <span>£{basePrice}</span>
+        <span>Pool access ({guests} {guests === 1 ? 'guest' : 'guests'})</span>
+        <span>{formatPrice(accessPrice)}</span>
       </div>
       {selectedExtras.length > 0 && (
         <div className="flex justify-between mb-2">
           <span>Extras</span>
-          <span>£{extrasPrice}</span>
+          <span>{formatPrice(extrasPrice)}</span>
         </div>
       )}
       <div className="flex justify-between font-semibold">
         <span>Total</span>
-        <span>£{totalPrice}</span>
+        <span>{formatPrice(totalPrice)}</span>
       </div>
     </div>
   );

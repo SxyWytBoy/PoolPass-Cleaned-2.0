@@ -2,12 +2,15 @@
 import React from 'react';
 import { Check, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import PersonAvatar from '@/components/common/Avatar';
 
 interface PoolInfoProps {
   description: string;
   host: {
     name: string;
     image: string;
+    joinedDate?: string;
+    responseTime?: string;
   };
   poolDetails: {
     size: string;
@@ -25,12 +28,19 @@ const PoolInfo = ({ description, host, poolDetails, amenities }: PoolInfoProps) 
         <div>
           <h2 className="text-2xl font-semibold mb-1">About this pool</h2>
           <p className="text-gray-600">Hosted by {host.name}</p>
+          {(host.joinedDate || host.responseTime) && (
+            <p className="text-sm text-gray-500 mt-1">
+              {host.joinedDate && <>Hosting since {host.joinedDate}</>}
+              {host.joinedDate && host.responseTime && ' · '}
+              {host.responseTime && <>Replies {host.responseTime.toLowerCase()}</>}
+            </p>
+          )}
         </div>
         <div className="relative">
-          <img 
-            src={host.image} 
-            alt={host.name}
-            className="w-14 h-14 rounded-full border-2 border-white shadow-md"
+          <PersonAvatar
+            name={host.name}
+            src={host.image}
+            className="w-14 h-14 border-2 border-white shadow-md"
           />
           <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
             <Check className="h-3 w-3 text-green-600" />

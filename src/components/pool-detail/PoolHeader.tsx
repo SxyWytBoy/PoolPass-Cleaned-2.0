@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Star, MapPin } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface PoolHeaderProps {
   name: string;
@@ -18,8 +17,8 @@ const PoolHeader = ({ name, rating = 0, reviews = 0, location }: PoolHeaderProps
         <div className="flex items-center mr-4">
           <div className="flex items-center px-3 py-1 bg-yellow-50 rounded-full">
             <Star className="h-4 w-4 fill-yellow-400 stroke-yellow-400 mr-1" />
-            <span className="font-medium">{rating.toFixed(1)}</span>
-            <span className="text-gray-500 ml-1">({reviews} reviews)</span>
+            <span className="font-medium">{reviews > 0 ? rating.toFixed(1) : 'New'}</span>
+            <span className="text-gray-500 ml-1">({reviews} {reviews === 1 ? 'review' : 'reviews'})</span>
           </div>
         </div>
         <div className="flex items-center">

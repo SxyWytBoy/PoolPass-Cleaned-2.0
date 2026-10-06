@@ -10,13 +10,15 @@ import { cn } from '@/lib/utils';
 interface DateSelectorProps {
   selectedDate: Date | undefined;
   setSelectedDate: (date: Date | undefined) => void;
+  isDayAvailable?: (date: Date) => boolean;
 }
 
-const DateSelector = ({ selectedDate, setSelectedDate }: DateSelectorProps) => {
+const DateSelector = ({ selectedDate, setSelectedDate, isDayAvailable }: DateSelectorProps) => {
+  const [open, setOpen] = React.useState(false);
   return (
     <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-      <Popover>
+      <span className="block text-sm font-medium text-gray-700 mb-2">Select Date</span>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -33,9 +35,12 @@ const DateSelector = ({ selectedDate, setSelectedDate }: DateSelectorProps) => {
           <Calendar
             mode="single"
             selected={selectedDate}
-            onSelect={setSelectedDate}
+            onSelect={(date) => {
+              setSelectedDate(date);
+              setOpen(false);
+            }}
             initialFocus
-            disabled={(date) => date < new Date()}
+            disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0)) || (isDayAvailable ? !isDayAvailable(day) : false)}
           />
         </PopoverContent>
       </Popover>

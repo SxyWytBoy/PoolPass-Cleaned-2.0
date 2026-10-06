@@ -145,7 +145,7 @@ const HostApply = () => {
           available_to: availableTo,
           available_days: availableDays,
           host_name: hostName,
-          host_email: hostEmail,
+          host_email: hostEmail.trim().toLowerCase(),
           host_phone: hostPhone,
           images: imageUrls,
           status: 'pending',
@@ -158,8 +158,8 @@ const HostApply = () => {
 
       setSubmitted(true);
 
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setUploadProgress('');

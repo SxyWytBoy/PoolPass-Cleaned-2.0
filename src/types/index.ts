@@ -40,7 +40,7 @@ export type Pool = {
   available_time_slots: { id: string; time: string }[];
   host_id: string;
   created_at: string;
-  reviewsData?: any[]; // Added this to allow for reviews data to be included
+  reviewsData?: Review[]; // Added this to allow for reviews data to be included
 };
 
 export type Review = {

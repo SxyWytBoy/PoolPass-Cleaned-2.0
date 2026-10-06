@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0 flex items-center">
               <img
-                src="/logo.png"
+                src={`${import.meta.env.BASE_URL}logo.png`}
                 alt="PoolPass Logo"
                 className="h-24 md:h-28 w-auto"
               />

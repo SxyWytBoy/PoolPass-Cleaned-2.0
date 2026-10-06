@@ -2,7 +2,7 @@
 import { Pool, Booking, User, Review } from './index';
 
 // API Response interfaces
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -23,14 +23,14 @@ export interface CrmSyncRequest {
   crmType: 'salesforce' | 'hubspot' | 'zoho' | 'custom';
   crmEndpoint?: string;
   authToken?: string;
-  data: any;
+  data: unknown;
 }
 
 // CRM Webhook payload structure
 export interface CrmWebhookPayload {
   eventType: 'booking_created' | 'booking_updated' | 'booking_cancelled' | 'user_created' | 'review_submitted';
   timestamp: string;
-  data: any;
+  data: unknown;
   signature?: string;
 }
 

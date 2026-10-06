@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -8,37 +9,11 @@ import Testimonials from '@/components/Testimonials';
 import Footer from '@/components/Footer';
 import PoolCard from '@/components/PoolCard';
 import WaitlistBanner from '@/components/WaitlistBanner';
-import { supabase } from '@/lib/supabase';
-
-interface Pool {
-  id: string;
-  name: string;
-  location: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  image_url: string;
-  indoor_outdoor: 'indoor' | 'outdoor' | 'both';
-  amenities: string[];
-}
+import { FALLBACK_POOL_IMAGES, fetchActivePools, poolImage } from '@/lib/pools';
 
 const Index = () => {
-  const [featuredPools, setFeaturedPools] = useState<Pool[]>([]);
-
-  useEffect(() => {
-    const fetchFeatured = async () => {
-      const { data } = await supabase
-        .from('pools')
-        .select('*')
-        .eq('is_active', true)
-        .order('rating', { ascending: false })
-        .limit(3);
-
-      if (data) setFeaturedPools(data);
-    };
-
-    fetchFeatured();
-  }, []);
+  const { data: pools = [] } = useQuery({ queryKey: ['pools'], queryFn: fetchActivePools });
+  const featuredPools = pools.slice(0, 3);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -69,9 +44,10 @@ const Index = () => {
                 price={pool.price}
                 rating={pool.rating}
                 reviews={pool.reviews}
-                image={pool.image_url}
+                image={poolImage(pool)}
                 indoorOutdoor={pool.indoor_outdoor}
                 amenities={pool.amenities}
+                fallbackImage={FALLBACK_POOL_IMAGES[pool.indoor_outdoor]}
               />
             ))}
           </div>

@@ -6,10 +6,11 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import DemoAccounts from '@/components/common/DemoAccounts';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -19,8 +20,10 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const SignIn = () => {
-  const { signIn, user } = useAuth();
+  const { signIn, user, userType } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from;
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<FormData>({
@@ -33,9 +36,9 @@ const SignIn = () => {
   
   React.useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(from || (userType === 'host' ? '/host-dashboard' : '/dashboard'), { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, userType, from, navigate]);
   
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -54,6 +57,13 @@ const SignIn = () => {
         <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 sm:p-8">
           <h1 className="text-2xl font-bold text-center mb-6">Sign In to PoolPass</h1>
           
+          <DemoAccounts
+            onPick={(email, password) => {
+              form.setValue('email', email);
+              form.setValue('password', password);
+            }}
+          />
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

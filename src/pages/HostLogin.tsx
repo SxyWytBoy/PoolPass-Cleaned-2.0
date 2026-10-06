@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/lib/supabase';
+import DemoAccounts from '@/components/common/DemoAccounts';
 
 const HostLogin = () => {
   const navigate = useNavigate();
@@ -49,6 +50,13 @@ const HostLogin = () => {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5 bg-white rounded-2xl shadow-md p-8">
+            <DemoAccounts
+              only="host"
+              onPick={(demoEmail, demoPassword) => {
+                setEmail(demoEmail);
+                setPassword(demoPassword);
+              }}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
@@ -85,9 +93,13 @@ const HostLogin = () => {
             </Button>
 
             <p className="text-xs text-center text-gray-400">
-              Don't have an account?{' '}
+              New to hosting?{' '}
               <Link to="/host-apply" className="text-blue-600 hover:underline">
                 Apply to list your pool
+              </Link>
+              {' '}or{' '}
+              <Link to="/sign-up" className="text-blue-600 hover:underline">
+                create a host account
               </Link>
             </p>
 

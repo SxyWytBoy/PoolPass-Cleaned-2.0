@@ -1,26 +1,28 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
 interface BookingActionProps {
   isUserLoggedIn: boolean;
   isBookingValid: boolean;
+  submitting?: boolean;
   onBookNow: () => void;
 }
 
-const BookingAction = ({ isUserLoggedIn, isBookingValid, onBookNow }: BookingActionProps) => {
+const BookingAction = ({ isUserLoggedIn, isBookingValid, submitting = false, onBookNow }: BookingActionProps) => {
   return (
     <>
-      <Button 
+      <Button
         className="w-full bg-pool-primary hover:bg-pool-secondary"
         onClick={onBookNow}
-        disabled={!isBookingValid}
+        disabled={submitting || (isUserLoggedIn && !isBookingValid)}
       >
-        {isUserLoggedIn ? 'Book Now' : 'Sign in to Book'}
+        {!isUserLoggedIn ? 'Sign in to Book' : submitting ? 'Booking...' : 'Request Booking'}
       </Button>
-      
+
       <p className="text-xs text-center text-gray-500 mt-4">
-        You won't be charged yet
+        {isUserLoggedIn && !isBookingValid
+          ? 'Choose a date and access option to continue'
+          : "You won't be charged until the host confirms"}
       </p>
     </>
   );

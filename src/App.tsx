@@ -1,8 +1,9 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, HashRouter, MemoryRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Pools from "./pages/Pools";
 import PoolDetail from "./pages/PoolDetail";
@@ -21,8 +22,28 @@ import SafetyPage from "./pages/SafetyPage";
 import Waitlist from "./pages/Waitlist";
 import HostApply from "./pages/HostApply";
 import Watermark from "./components/Watermark";
+import InfoPage from "./pages/InfoPage";
+import ScrollToTop from "./components/ScrollToTop";
 
-const queryClient = new QueryClient();
+const INFO_PAGES = [
+  "about", "careers", "press", "blog", "gift-cards", "help", "contact",
+  "terms", "privacy", "host-resources", "host-forum", "responsible-hosting",
+];
+
+// "browser" (default) gives clean URLs and needs the host to serve index.html for
+// unknown paths. "hash" and "memory" suit static hosts and embedded previews.
+const routerMode = import.meta.env.VITE_ROUTER_MODE;
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || undefined;
+
+const Router = ({ children }: { children: React.ReactNode }) => {
+  if (routerMode === "hash") return <HashRouter>{children}</HashRouter>;
+  if (routerMode === "memory") return <MemoryRouter>{children}</MemoryRouter>;
+  return <BrowserRouter basename={basename === "." ? undefined : basename}>{children}</BrowserRouter>;
+};
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -31,7 +52,8 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Watermark />
-        <BrowserRouter>
+        <Router>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/pools" element={<Pools />} />
@@ -55,9 +77,14 @@ const App = () => (
             <Route
               path="/host-dashboard"
               element={
-                <HostDashboard />
+                <ProtectedRoute userType="host">
+                  <HostDashboard />
+                </ProtectedRoute>
               }
             />
+            {INFO_PAGES.map((slug) => (
+              <Route key={slug} path={`/${slug}`} element={<InfoPage />} />
+            ))}
             <Route
               path="/crm-settings"
               element={
@@ -69,7 +96,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -9,24 +10,19 @@ import { Calendar as CalendarIcon, Search, MapPin, Filter } from "lucide-react";
 import { cn } from '@/lib/utils';
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AMENITY_OPTIONS, parseDateString, toDateString } from '@/lib/pools';
 
-const amenities = [
-  { id: 'indoor', label: 'Indoor' },
-  { id: 'outdoor', label: 'Outdoor' },
-  { id: 'rooftop', label: 'Rooftop' },
-  { id: 'covered', label: 'Covered Areas' },
-  { id: 'bar', label: 'Bar' },
-  { id: 'restaurant', label: 'Restaurant' },
-  { id: 'loungers', label: 'Loungers' },
-  { id: 'towels', label: 'Towels to Rent' },
-  { id: 'spa', label: 'Spa/Gym Facilities' },
-];
+const amenities = AMENITY_OPTIONS.map((label) => ({ id: label, label }));
 
 const SearchBar = ({ className }: { className?: string }) => {
-  const [location, setLocation] = useState("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [location, setLocation] = useState(() => searchParams.get('location') ?? "");
+  const [date, setDate] = useState<Date | undefined>(() => parseDateString(searchParams.get('date')));
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
+    () => searchParams.get('amenities')?.split(',').filter(Boolean) ?? []
+  );
   
   const handleAmenityChange = (amenityId: string) => {
     setSelectedAmenities(current => 
@@ -38,8 +34,12 @@ const SearchBar = ({ className }: { className?: string }) => {
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching for:", { location, date, amenities: selectedAmenities });
-    // In a real app, this would navigate to search results with the params
+    const params = new URLSearchParams();
+    if (location.trim()) params.set('location', location.trim());
+    if (date) params.set('date', toDateString(date));
+    if (selectedAmenities.length > 0) params.set('amenities', selectedAmenities.join(','));
+    const query = params.toString();
+    navigate(`/pools${query ? `?${query}` : ''}`);
   };
 
   return (
@@ -55,7 +55,7 @@ const SearchBar = ({ className }: { className?: string }) => {
         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <Input
           type="text"
-          placeholder="Location"
+          placeholder="Town, city or pool name"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           className="pl-10 h-12 bg-gray-50 border-gray-200 w-full"
@@ -86,7 +86,7 @@ const SearchBar = ({ className }: { className?: string }) => {
                 setIsCalendarOpen(false);
               }}
               initialFocus
-              disabled={(date) => date < new Date()}
+              disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0))}
             />
           </PopoverContent>
         </Popover>
@@ -115,12 +115,12 @@ const SearchBar = ({ className }: { className?: string }) => {
               {amenities.map((amenity) => (
                 <div key={amenity.id} className="flex items-center space-x-2">
                   <Checkbox 
-                    id={`amenity-${amenity.id}`} 
+                    id={`search-amenity-${amenity.id}`} 
                     checked={selectedAmenities.includes(amenity.id)}
                     onCheckedChange={() => handleAmenityChange(amenity.id)}
                   />
                   <label 
-                    htmlFor={`amenity-${amenity.id}`}
+                    htmlFor={`search-amenity-${amenity.id}`}
                     className="text-sm text-gray-700 cursor-pointer"
                   >
                     {amenity.label}

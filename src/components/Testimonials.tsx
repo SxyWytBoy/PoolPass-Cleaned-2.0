@@ -1,27 +1,25 @@
 
 import React from 'react';
+import PersonAvatar from '@/components/common/Avatar';
 
 const testimonials = [
   {
     id: 1,
     quote: "PoolPass made our weekend getaway perfect! We found a stunning private pool that was way better than going to a crowded public venue.",
     name: "Sarah Johnson",
-    location: "Manchester",
-    image: "https://randomuser.me/api/portraits/women/44.jpg"
+    location: "Manchester"
   },
   {
     id: 2,
     quote: "As a family with young kids, finding a private pool through PoolPass gave us the perfect, stress-free swimming experience.",
     name: "James Wilson",
-    location: "Birmingham",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
+    location: "Birmingham"
   },
   {
     id: 3,
     quote: "I've listed my hotel pool on PoolPass and have seen a significant increase in bookings during off-peak hours. It's brilliant!",
     name: "Emma Thompson",
-    location: "London",
-    image: "https://randomuser.me/api/portraits/women/63.jpg"
+    location: "London"
   }
 ];
 
@@ -64,11 +62,7 @@ const Testimonials = () => {
                   "{testimonial.quote}"
                 </blockquote>
                 <div className="flex items-center">
-                  <img 
-                    src={testimonial.image} 
-                    alt={testimonial.name}
-                    className="h-10 w-10 rounded-full mr-3"
-                  />
+                  <PersonAvatar name={testimonial.name} className="h-10 w-10 mr-3 text-sm" />
                   <div>
                     <p className="font-semibold text-gray-800">{testimonial.name}</p>
                     <p className="text-sm text-gray-500">{testimonial.location}</p>

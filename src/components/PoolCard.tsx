@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { cn } from '@/lib/utils';
-import { toast } from '@/components/ui/use-toast';
+import { FALLBACK_POOL_IMAGES } from '@/lib/pools';
 
 interface PoolCardProps {
   id: string;
@@ -44,16 +44,6 @@ const PoolCard = ({
   className
 }: PoolCardProps) => {
   
-  const handleQuickViewClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    toast({
-      title: "Quick view",
-      description: `Showing quick preview for ${name}`,
-    });
-  };
-  
   return (
     <Link 
       to={`/pools/${id}`}
@@ -68,20 +58,14 @@ const PoolCard = ({
               alt={name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               onError={(e) => {
-                // Use the fallbackImage if provided, otherwise use a placeholder
-                (e.target as HTMLImageElement).src = fallbackImage || `https://via.placeholder.com/800x600?text=${encodeURIComponent(name)}`;
+                const img = e.target as HTMLImageElement;
+                const fallback = fallbackImage || FALLBACK_POOL_IMAGES[indoorOutdoor];
+                if (img.src !== fallback) img.src = fallback;
               }}
             />
           </AspectRatio>
           <div className="absolute top-3 left-3 flex gap-2">
-            <Badge 
-              className={cn(
-                "text-xs font-medium px-2 py-0.5",
-                indoorOutdoor === 'indoor' ? "bg-pool-light text-pool-dark" : 
-                indoorOutdoor === 'outdoor' ? "bg-pool-light text-pool-dark" :
-                "bg-pool-light text-pool-dark"
-              )}
-            >
+            <Badge className="text-xs font-medium px-2 py-0.5 bg-pool-light text-pool-dark capitalize hover:bg-pool-light">
               {indoorOutdoor === 'both' ? 'Indoor & Outdoor' : indoorOutdoor}
             </Badge>
           </div>
@@ -126,7 +110,6 @@ const PoolCard = ({
             variant="outline" 
             size="sm" 
             className="text-xs bg-pool-light text-pool-primary hover:bg-pool-primary hover:text-white"
-            onClick={handleQuickViewClick}
           >
             View Details
             <ArrowRight className="ml-1 h-3 w-3" />

@@ -1,78 +1,92 @@
-
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { toDateString, type TimeSlot } from '@/lib/pools';
+import type { PoolExtra } from '@/types/supabase';
 
-export const useBooking = (poolId: string | undefined, userId: string | undefined, price: number) => {
+export const calculateExtrasPrice = (selectedExtras: string[], extras: PoolExtra[] | undefined) =>
+  selectedExtras.reduce((total, extraId) => {
+    const extra = extras?.find((e) => e.id === extraId);
+    return total + (extra ? extra.price : 0);
+  }, 0);
+
+export const useBooking = (
+  poolId: string | undefined,
+  userId: string | undefined,
+  price: number,
+  timeSlots: TimeSlot[],
+  extras: PoolExtra[] | undefined
+) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null);
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+  const [guests, setGuests] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
 
   const toggleExtra = (extraId: string) => {
-    if (selectedExtras.includes(extraId)) {
-      setSelectedExtras(selectedExtras.filter(id => id !== extraId));
-    } else {
-      setSelectedExtras([...selectedExtras, extraId]);
-    }
+    setSelectedExtras((current) =>
+      current.includes(extraId) ? current.filter((id) => id !== extraId) : [...current, extraId]
+    );
   };
 
-  const handleBookNow = async (
-    extras: { id: string; name: string; price: number }[] | undefined
-  ) => {
+  const slot = timeSlots.find((s) => s.id === selectedTimeSlot);
+  const accessPrice = Math.round(price * (slot?.priceFactor ?? 1) * guests * 100) / 100;
+  const extrasPrice = calculateExtrasPrice(selectedExtras, extras);
+  const totalPrice = accessPrice + extrasPrice;
+
+  /** Creates the booking. Resolves to true when it was saved. */
+  const handleBookNow = async (): Promise<boolean> => {
     if (!userId) {
       toast({
-        title: "Authentication required",
-        description: "Please sign in to book this pool",
+        title: 'Sign in to book',
+        description: 'Create a free account or sign in to book this pool.',
       });
-      return;
+      return false;
     }
-    
-    if (!selectedDate || !selectedTimeSlot) {
+
+    if (!poolId || !selectedDate || !slot) {
       toast({
-        title: "Please select a date and time slot",
-        variant: "destructive",
+        title: 'Choose a date and access option',
+        variant: 'destructive',
       });
-      return;
+      return false;
     }
-    
+
+    setSubmitting(true);
     try {
-      const timeSlot = poolId ? getTimeSlotText(selectedTimeSlot) : '';
-      
-      // Calculate total price for the booking
-      const basePrice = price || 0;
-      const extrasPrice = calculateExtrasPrice(selectedExtras, extras);
-      const totalPrice = basePrice + extrasPrice;
-      
-      const { error } = await supabase
-        .from('bookings')
-        .insert({
-          pool_id: poolId || '',
-          user_id: userId,
-          date: selectedDate.toISOString().split('T')[0],
-          time_slot: timeSlot,
-          extras: selectedExtras,
-          total_price: totalPrice,
-          status: 'pending'
-        });
-        
+      const { error } = await supabase.from('bookings').insert({
+        pool_id: poolId,
+        user_id: userId,
+        date: toDateString(selectedDate),
+        time_slot: slot.time,
+        guests,
+        extras: selectedExtras,
+        total_price: totalPrice,
+        status: 'pending',
+      });
+
       if (error) throw error;
-      
+
       toast({
-        title: "Booking successful!",
-        description: "You can view your booking in your dashboard",
+        title: 'Booking requested',
+        description: 'The host will confirm shortly. You can follow it in your dashboard.',
       });
-      
-      // Reset form
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
       resetForm();
-      
+      return true;
     } catch (error) {
-      console.error("Error booking pool:", error);
+      console.error('Error booking pool:', error);
       toast({
-        title: "Booking failed",
-        description: "There was an error processing your booking",
-        variant: "destructive",
+        title: 'Booking failed',
+        description: error instanceof Error ? error.message : 'There was an error processing your booking. Please try again.',
+        variant: 'destructive',
       });
+      return false;
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -80,22 +94,7 @@ export const useBooking = (poolId: string | undefined, userId: string | undefine
     setSelectedDate(undefined);
     setSelectedTimeSlot(null);
     setSelectedExtras([]);
-  };
-
-  const getTimeSlotText = (timeSlotId: string) => {
-    // This function would normally look up the time slot from available slots
-    // For simplicity, returning a placeholder
-    return "Full day access"; // Updated from time slot to full day access
-  };
-
-  const calculateExtrasPrice = (
-    selectedExtras: string[],
-    extras: { id: string; name: string; price: number }[] | undefined
-  ) => {
-    return selectedExtras.reduce((total, extraId) => {
-      const extra = extras?.find((e) => e.id === extraId);
-      return total + (extra ? extra.price : 0);
-    }, 0);
+    setGuests(1);
   };
 
   return {
@@ -105,7 +104,12 @@ export const useBooking = (poolId: string | undefined, userId: string | undefine
     setSelectedTimeSlot,
     selectedExtras,
     toggleExtra,
+    guests,
+    setGuests,
+    accessPrice,
+    extrasPrice,
+    totalPrice,
+    submitting,
     handleBookNow,
-    calculateExtrasPrice
   };
 };

@@ -14,6 +14,7 @@ import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
 
 const formSchema = z.object({
+  fullName: z.string().trim().min(2, 'Enter your name'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(6, 'Confirm your password'),
@@ -28,7 +29,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const SignUp = () => {
-  const { signUp, user } = useAuth();
+  const { signUp, user, userType } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +37,7 @@ const SignUp = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -45,20 +47,18 @@ const SignUp = () => {
   
   React.useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(userType === 'host' ? '/host-dashboard' : '/dashboard', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, userType, navigate]);
   
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      const result = await signUp(data.email, data.password, data.userType);
-      
-      if (!result.error) {
-        // Delay navigation to allow toast to show
-        setTimeout(() => {
-          navigate('/sign-in');
-        }, 2000);
+      const result = await signUp(data.email, data.password, data.userType, data.fullName);
+
+      // When the account is active straight away, the effect above redirects.
+      if (!result.error && result.needsConfirmation) {
+        navigate('/sign-in');
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -82,6 +82,20 @@ const SignUp = () => {
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Jane Smith" autoComplete="name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -134,7 +148,7 @@ const SignUp = () => {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="flex gap-4"
+                        className="flex flex-col sm:flex-row gap-4"
                       >
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="guest" id="guest" />

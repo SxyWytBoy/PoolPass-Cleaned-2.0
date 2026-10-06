@@ -44,7 +44,7 @@ const PoolFilters = ({
       
       {/* Price Range Filter */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-3">Price Range (per hour)</h3>
+        <h3 className="text-sm font-medium mb-3">Price Range (per person, per day)</h3>
         <div className="px-2">
           <Slider
             defaultValue={[0, 100]}

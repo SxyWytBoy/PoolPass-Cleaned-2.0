@@ -6,15 +6,13 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, userType, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
-
-  const userType = user?.user_metadata?.user_type || 'guest';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm">
@@ -24,7 +22,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
-              src="/logo.png"
+              src={`${import.meta.env.BASE_URL}logo.png`}
               alt="PoolPass Logo"
               className="h-16 md:h-20 w-auto"
             />
@@ -79,6 +77,7 @@ const Navbar = () => {
           <button
             type="button"
             className="md:hidden rounded-md p-2 text-gray-700 hover:bg-gray-100"
+            aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -95,7 +94,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={cn("md:hidden", mobileMenuOpen ? "block" : "hidden")}>
+        <div className={cn("md:hidden", mobileMenuOpen ? "block" : "hidden")} onClick={() => setMobileMenuOpen(false)}>
           <div className="pt-2 pb-4 space-y-1">
             <Link to="/pools" className="block py-2 text-base text-gray-700 hover:text-pool-primary">
               Find Pools
